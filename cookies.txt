@@ -1,0 +1,30 @@
+# Netscape HTTP Cookie File
+# https://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file! Do not edit.
+
+.google.com	TRUE	/verify	TRUE	1798715928	SNID	ALQpT-WfM74sEzrUzBXLoDW60dIBnSE0xYiuuj4x4ga7lrtHDOGUO0DaXYULp-B2kTFAXY6krI_4GahUgeI5FRDmKC9HJl_Lw6Y
+www.wikipedia.org	FALSE	/	TRUE	1785639484	WMF-Last-Access	01-Jul-2026
+.wikipedia.org	TRUE	/	TRUE	1785639484	WMF-Last-Access-Global	01-Jul-2026
+.wikipedia.org	TRUE	/	TRUE	0	GeoIP	NG:LA:Lagos:6.45:3.39:v4
+www.wikipedia.org	FALSE	/	TRUE	1782907806	NetworkProbeLimit	0.001
+.wikipedia.org	TRUE	/	TRUE	1814410684	WMF-Uniq	qFuUJXVEusXsuTRBRT__AgOQAAAAAFvd7prE1siSnZMItr_95iLEokDisp2t12U4
+.mozilla.org	TRUE	/	FALSE	1817464498	_ga_B9CY1C9VBC	GS2.1.s1782904257$o1$g1$t1782904498$j32$l0$h0
+.mozilla.org	TRUE	/	FALSE	1817464257	_ga	GA1.1.777721146.1782904257
+.google.com	TRUE	/	TRUE	1798456719	AEC	AdJVEato3_G-B6LLIuxI5IwoZBG4VQ0810SOYmecwN40bDdAkxQLGRIpeJQ
+.google.com	TRUE	/	TRUE	1798456719	__Secure-BUCKET	CPkE
+.google.com	TRUE	/	TRUE	1798715927	NID	532=w0rg38uEUVtCCbt_y3kb7BsIBkTtZrS1txAWvERAQMeDP-hezFNgEL-0E252OKC39_ja4wJEyFrAB1d_xnv27LylogOyKOM-1nLeETTU2XvcTMmWKmkVTeiHfjPHlZ-NKvd-CrqSxcTHA-GO8FVIyeBEr1vinHt8XLXcF2yaZndAq6jBObzzISjX7wX6oUn-2aRVZZ1N2J3KSO3L121NB66CXjiBKK4Ow8_5v-hHctSNvNYzQRGbVsRsV9LieOQjcyVSGozxiQ1sPubnFG4Uzi66aRmnsA2d0CPO
+.google.com	TRUE	/	TRUE	1817032728	SOCS	CAISHAgCEhJnd3NfMjAyNjA2MjktMF9SQzEaAmVuIAEaBgiAsZHSBg
+.google.com	TRUE	/	TRUE	1782905505	__Secure-STRP	ANmZwa0UrBQ11-AVAkSqmwkTW44wIMDvU-JywvdEnIKtBCoDDkt09iyJ4KsLXRiJEYVrdG3Z9H8z1npqXVXEwikaR-OnNwy3YXms
+www.google.com	FALSE	/	FALSE	1782905797	DV	Y8bhV8x_brEg0DBPczSSFW2x0ePW8RlonmSkrvHUVwcAAAA
+.instagram.com	TRUE	/	TRUE	1817465379	csrftoken	YvX3t02UQus8CbvovzQNv8Fzvmg7Jein
+.instagram.com	TRUE	/	TRUE	1817465251	datr	pPlEaptOlTqY9tQssqXnowl0
+.instagram.com	TRUE	/	TRUE	1814441251	ig_did	9DA74F26-0998-450D-A695-392E2FD8EE71
+.instagram.com	TRUE	/	TRUE	1817465251	mid	akT5pAAEAAEdm5aJVgTPfLZ0BfQm
+.instagram.com	TRUE	/	TRUE	1817465251	ps_l	1
+.instagram.com	TRUE	/	TRUE	1817465251	ps_n	1
+.instagram.com	TRUE	/	TRUE	1783510173	wd	980x1813
+.instagram.com	TRUE	/	TRUE	1783510104	dpr	2
+.instagram.com	TRUE	/	TRUE	1790681379	ds_user_id	67890349305
+.instagram.com	TRUE	/	TRUE	1814441356	sessionid	67890349305%3AXtchaASqAUXult%3A16%3AAYgPnCfiGyB-F5EAFXtQojl00ndP6_pdYZmk_ljM7Q
+.instagram.com	TRUE	/	TRUE	0	rur	"NCG\05467890349305\0541814441380:01ff3eb58177a46edc2f105674b65ded4732033ec8b7cc4d60e561a2899e77749ca4fd56"
+www.instagram.com	FALSE	/	FALSE	1782905366	th_eu_pref	""
