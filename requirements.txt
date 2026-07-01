@@ -1,2 +1,5 @@
-git+[https://github.com/yt-dlp/yt-dlp.git@master](https://github.com/yt-dlp/yt-dlp.git@master)
+gunicorn
+flask
+requests
+git+https://github.com/yt-dlp/yt-dlp.git@master
 
