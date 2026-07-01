@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 import yt_dlp
+import requests
 
 app = Flask(__name__)
 
@@ -11,14 +12,12 @@ def home():
 def download():
     data = request.get_json()
     video_url = data.get('url')
-    
+
     if not video_url:
         return jsonify({'error': 'Please provide a valid URL'}), 400
 
-        try:
-        # Configuration for yt-dlp to find media links securely
+    try:
         ydl_opts = {
-            'format': 'best',
             'quiet': True,
             'no_warnings': True,
             'cookiefile': 'cookies.txt',
@@ -27,41 +26,87 @@ def download():
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
+            title = info.get('title', 'Social_Media_Download')
             
-            # Initialize download target
-            download_url = None
-            title = info.get('title', 'Social Media Download')
+            formats_available = []
+            fallback_url = None
 
-            # CASE 1: Check for multi-item posts (Instagram Carousels / TikTok Slide Shows)
-            if 'entries' in info:
-                # Target the first media entry item in the gallery loop
-                first_entry = info['entries'][0] if info['entries'] else {}
-                download_url = first_entry.get('url') # Try to grab video from item
+            # 1. PROCESS VIDEOS & MULTIPLE QUALITY STREAMS
+            if info.get('formats'):
+                for f in info['formats']:
+                    # Filter out audio-only lines and prioritize direct video streams with formats
+                    if f.get('vcodec') != 'none' and f.get('url'):
+                        height = f.get('height')
+                        if height:
+                            label = f"{height}p"
+                            # Map standard industry flags cleanly
+                            if height >= 1080: label = "HD 1080p"
+                            elif height >= 720: label = "HD 720p"
+                            elif height >= 480: label = "SD 480p"
+                            
+                            formats_available.append({
+                                'quality': label,
+                                'url': f['url'],
+                                'type': 'video'
+                            })
                 
-                if not download_url and first_entry.get('thumbnails'):
-                    download_url = first_entry.get('thumbnails')[-1].get('url') # Fallback to image from item
+                # Sort resolution hierarchy (highest quality first)
+                formats_available = sorted(formats_available, key=lambda x: int(''.join(filter(str.isdigit, x['quality']))), reverse=True)
 
-            # CASE 2: Single-item posts (Standard Reels, Videos, or Single Image Posts)
-            if not download_url:
-                download_url = info.get('url') # Grab direct video stream
+            # 2. PROCESS CAROUSELS / SLIDESHOW ENTRIES
+            if not formats_available and 'entries' in info:
+                first_entry = info['entries'][0] if info['entries'] else {}
+                if first_entry.get('url'):
+                    fallback_url = first_entry.get('url')
+                elif first_entry.get('thumbnails'):
+                    fallback_url = first_entry.get('thumbnails')[-1].get('url')
 
-            # CASE 3: Fallback if it's a standalone image post with no video stream array
-            if not download_url and info.get('thumbnails'):
-                download_url = info.get('thumbnails')[-1].get('url')
+            # 3. PROCESS STANDALONE IMAGES / SINGLE FORMAT FALLBACKS
+            if not formats_available and not fallback_url:
+                fallback_url = info.get('url') or (info.get('thumbnails')[-1].get('url') if info.get('thumbnails') else info.get('thumbnail'))
 
-            if not download_url:
-                download_url = info.get('thumbnail')
+            # If it's a static image or fallback item, add it as a primary stream
+            if not formats_available and fallback_url:
+                formats_available.append({
+                    'quality': 'High Quality Image',
+                    'url': fallback_url,
+                    'type': 'image'
+                })
 
-            # Safety validation flag
-            if not download_url:
-                return jsonify({'error': 'Could not extract any playable video or image from this link.'}), 400
+            if not formats_available:
+                return jsonify({'error': 'Could not extract any content profiles.'}), 400
 
             return jsonify({
                 'success': True,
                 'title': title,
-                'download_url': download_url
+                'formats': formats_available
             })
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-            
+
+# NEW PROXY ROUTE: Forces mobile browsers to download the media asset locally inside the application window
+@app.route('/proxy-download')
+def proxy_download():
+    media_url = request.args.get('url')
+    filename = request.args.get('title', 'download')
+    
+    if not media_url:
+        return "Missing media target URL", 400
+
+    try:
+        # Stream data from the target social media platform CDN
+        req = requests.get(media_url, stream=True, timeout=15)
+        
+        # Strip dangerous formatting structures out of names
+        clean_filename = "".join([c for c in filename if c.isalpha() or c.isdigit() or c in ' ._-']).strip()
+        
+        # Intercept headers to explicitly instruct mobile clients to perform a file saving sequence
+        headers = {
+            'Content-Disposition': f'attachment; filename="{clean_filename or "media"}"',
+            'Content-Type': req.headers.get('Content-Type', 'application/octet-stream')
+        }
+        
+        return Response(req.iter_content(chunk_size=1024*1024), headers=headers)
+    except Exception as e:
+        return f"Download stream compilation broke: {str(e)}", 500
