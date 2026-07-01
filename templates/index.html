@@ -86,20 +86,20 @@
                 <p class="text-blue-400 text-sm font-medium">Analyzing URL signatures... please hold on...</p>
             </div>
 
-            <!-- Result Payload Box -->
-            <div id="resultBox" class="hidden bg-slate-900 border border-emerald-500/20 p-6 rounded-2xl shadow-xl text-center space-y-4">
-                <div class="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                    <i class="fa-solid fa-circle-check text-xl"></i>
-                </div>
-                <div>
-                    <h3 class="text-sm font-semibold text-slate-300">Link Verified Successfully!</h3>
-                    <p id="videoTitle" class="text-xs text-slate-400 truncate max-w-xs mx-auto mt-1"></p>
-                </div>
-                <a id="downloadBtn" href="#" download target="_blank" onclick="saveToHistory()"
-                   class="inline-block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl text-sm transition">
-                    <i class="fa-solid fa-arrow-down-to-bracket mr-2"></i> Save to Storage
-                </a>
+                    <!---- Result Payload Box -->
+        <div id="resultBox" class="hidden bg-slate-900 border border-emerald-500/20 p-6 rounded-2xl shadow-xl space-y-4">
+            <div class="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                <i class="fa-solid fa-circle-check text-xl"></i>
             </div>
+            <div class="text-center">
+                <h3 class="text-sm font-semibold text-slate-300">Link Verified Successfully!</h3>
+                <p id="videoTitle" class="text-xs text-slate-400 truncate max-w-xs mx-auto mt-1"></p>
+                
+                <!-- Dynamic Quality Buttons Stream Container -->
+                <div id="qualityButtonsContainer" class="mt-4 space-y-2.5"></div>
+            </div>
+        </div>
+
         </section>
 
         <!-- SECTION 2: DOWNLOAD HISTORY -->
@@ -199,47 +199,67 @@
         }
 
         async function processVideo() {
-            const urlInput = document.getElementById('videoUrl').value;
-            const resultBox = document.getElementById('resultBox');
-            const statusText = document.getElementById('statusText');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const videoTitle = document.getElementById('videoTitle');
+    const urlInput = document.getElementById('videoUrl');
+    const resultBox = document.getElementById('resultBox');
+    const statusText = document.getElementById('statusText');
+    const videoTitle = document.getElementById('videoTitle');
+    const buttonsContainer = document.getElementById('qualityButtonsContainer');
 
-            if (!urlInput.trim()) {
-                alert('Please supply a valid URL parameter string first.');
-                return;
-            }
+    if (!urlInput.value.trim()) {
+        alert('Please supply a valid URL parameter string first.');
+        return;
+    }
 
-            statusText.classList.remove('hidden');
-            resultBox.classList.add('hidden');
+    statusText.classList.remove('hidden');
+    resultBox.classList.add('hidden');
+    buttonsContainer.innerHTML = ''; // Reset container
 
-            try {
-                const response = await fetch('/download', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: urlInput })
-                });
+    try {
+        const response = await fetch('/download', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/octet-stream' ? 'application/json' : 'application/json' },
+            body: JSON.stringify({ url: urlInput.value })
+        });
+
+        const data = await response.json();
+        statusText.classList.add('hidden');
+
+        if (data.success) {
+            videoTitle.innerText = data.title;
+            
+            // Loop through each extracted format profile to mount in-app download targets
+            data.formats.forEach(item => {
+                const downloadLink = `/proxy-download?url=${encodeURIComponent(item.url)}&title=${encodeURIComponent(data.title)}`;
                 
-                const data = await response.json();
-                statusText.classList.add('hidden');
+                const btn = document.createElement('a');
+                btn.href = downloadLink;
+                // Note: We remove target="_blank" so download hooks process cleanly inside the app frame
+                btn.className = "w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition text-sm";
+                
+                // Switch icons cleanly depending on media stream configurations
+                const iconClass = item.type === 'image' ? 'fa-image' : 'fa-video';
+                btn.innerHTML = `<i class="fa-solid ${iconClass}"></i> Download ${item.quality}`;
+                
+                // Track actions to active dashboard history array
+                btn.onclick = () => {
+                    currentActiveUrl = downloadLink;
+                    currentActiveTitle = `${data.title} (${item.quality})`;
+                    saveToHistory();
+                };
+                
+                buttonsContainer.appendChild(btn);
+            });
 
-                if (data.success) {
-                    videoTitle.innerText = data.title;
-                    downloadBtn.href = data.download_url;
-                    
-                    // Keep tracking states temporarily
-                    currentActiveUrl = data.download_url;
-                    currentActiveTitle = data.title;
-                    
-                    resultBox.classList.remove('hidden');
-                } else {
-                    alert('Extraction fault: ' + (data.error || 'Check source endpoint structures.'));
-                }
-            } catch (err) {
-                statusText.classList.add('hidden');
-                alert('Fatal interface drop while connecting to extraction framework.');
-            }
+            resultBox.classList.remove('hidden');
+        } else {
+            alert('Extraction fault: ' + (data.error || 'Check source endpoint structures.'));
         }
+    } catch (err) {
+        statusText.classList.add('hidden');
+        alert('Fatal interface drop while connecting to extraction framework.');
+    }
+}
+
 
         function saveToHistory() {
             const allowHistory = document.getElementById('historyToggle').checked;
