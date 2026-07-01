@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elismandate Downloader</title>
+    <!-- Tailwind CSS CDN for Professional Styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome for Modern Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .active-link { background-color: #2563eb; color: white; }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans text-slate-100 min-h-screen flex flex-col md:flex-row">
+
+    <!-- SIDEBAR NAVIGATION MENU -->
+    <nav class="w-full md:w-64 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 p-5 flex flex-col justify-between shrink-0">
+        <div>
+            <!-- Header Brand Name: Elismandate -->
+            <div class="flex items-center gap-3 mb-8 px-2">
+                <div class="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-wand-magic-sparkles text-xl text-white"></i>
+                </div>
+                <span class="text-xl font-black tracking-wider bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">ELISMANDATE</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="space-y-1.5">
+                <button onclick="switchTab('home')" id="nav-home" class="active-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition duration-200 hover:bg-slate-800 text-left">
+                    <i class="fa-solid fa-house text-base w-5 text-center"></i> ⭐ Home
+                </button>
+                <button onclick="switchTab('history')" id="nav-history" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-left">
+                    <i class="fa-solid fa-folder-open text-base w-5 text-center"></i> 📁 Download History
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-left">
+                    <i class="fa-solid fa-gear text-base w-5 text-center"></i> ⚙️ Settings
+                </button>
+                <button onclick="switchTab('about')" id="nav-about" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-left">
+                    <i class="fa-solid fa-circle-info text-base w-5 text-center"></i> ❓ About
+                </button>
+                <button onclick="switchTab('privacy')" id="nav-privacy" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-left">
+                    <i class="fa-solid fa-shield-halved text-base w-5 text-center"></i> 🛡️ Privacy Policy
+                </button>
+                <button onclick="switchTab('contact')" id="nav-contact" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition duration-200 text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-left">
+                    <i class="fa-solid fa-phone text-base w-5 text-center"></i> 📞 Contact
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer / Version -->
+        <div class="hidden md:block pt-4 border-t border-slate-800 text-center text-xs text-slate-500">
+            Elismandate v2.0
+        </div>
+    </nav>
+
+    <!-- MAIN APPCREATOR CONTENT PANEL -->
+    <main class="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full transition-all duration-300">
+        
+        <!-- SECTION 1: HOME PAGE (DOWNLOADER & SEARCH) -->
+        <section id="tab-home" class="tab-content block space-y-6">
+            <div class="text-center py-6">
+                <h1 class="text-3xl font-extrabold text-white tracking-tight">All-in-One Video Downloader</h1>
+                <p class="text-slate-400 mt-2 text-sm max-w-md mx-auto">Download your favorite clips from premium social media platforms directly to your local file gallery instantly.</p>
+            </div>
+
+            <!-- Search Bar / Link Input Input -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                    <input type="text" id="videoUrl" placeholder="Paste social video URL link here..." 
+                           class="w-full bg-slate-950 pl-11 pr-4 py-4 border border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-100 text-sm placeholder-slate-500">
+                </div>
+                
+                <button onclick="processVideo()" id="fetchBtn"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl transition duration-200 text-sm shadow-lg shadow-blue-600/20 active:scale-[0.99]">
+                    <i class="fa-solid fa-circle-down mr-2"></i> Fetch & Extract Video
+                </button>
+            </div>
+
+            <!-- Global Status Loader -->
+            <div id="statusText" class="hidden text-center p-6 bg-slate-900 border border-blue-900/30 rounded-2xl animate-pulse">
+                <i class="fa-solid fa-spinner fa-spin text-blue-500 text-xl mb-2"></i>
+                <p class="text-blue-400 text-sm font-medium">Analyzing URL signatures... please hold on...</p>
+            </div>
+
+            <!-- Result Payload Box -->
+            <div id="resultBox" class="hidden bg-slate-900 border border-emerald-500/20 p-6 rounded-2xl shadow-xl text-center space-y-4">
+                <div class="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                    <i class="fa-solid fa-circle-check text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-slate-300">Link Verified Successfully!</h3>
+                    <p id="videoTitle" class="text-xs text-slate-400 truncate max-w-xs mx-auto mt-1"></p>
+                </div>
+                <a id="downloadBtn" href="#" download target="_blank" onclick="saveToHistory()"
+                   class="inline-block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl text-sm transition">
+                    <i class="fa-solid fa-arrow-down-to-bracket mr-2"></i> Save to Storage
+                </a>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DOWNLOAD HISTORY -->
+        <section id="tab-history" class="tab-content hidden space-y-4">
+            <h2 class="text-2xl font-bold text-white mb-2">📁 Download History</h2>
+            <p class="text-slate-400 text-sm mb-4">Track files you've pulled through the Elismandate core download stream infrastructure.</p>
+            <div id="historyList" class="space-y-2">
+                <!-- Fallback when dynamic storage is clear -->
+                <div id="emptyHistory" class="text-center py-12 bg-slate-900 rounded-2xl border border-slate-800 text-slate-500 text-sm">
+                    <i class="fa-solid fa-folder-open text-3xl mb-3 block text-slate-600"></i> No historical downloads detected inside this instance.
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: SETTINGS -->
+        <section id="tab-settings" class="tab-content hidden space-y-6">
+            <h2 class="text-2xl font-bold text-white">⚙️ App Configurations</h2>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <div class="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <div>
+                        <p class="text-sm font-semibold">High-Definition Streams</p>
+                        <p class="text-xs text-slate-500">Auto-select the absolute best payload resolution parameters matching network scale.</p>
+                    </div>
+                    <input type="checkbox" checked class="w-4 h-4 accent-blue-600">
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <div>
+                        <p class="text-sm font-semibold">Local Session Storage</p>
+                        <p class="text-xs text-slate-500">Persist downloaded cache histories logs natively on hardware partitions.</p>
+                    </div>
+                    <input type="checkbox" checked id="historyToggle" class="w-4 h-4 accent-blue-600">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: ABOUT PAGE -->
+        <section id="tab-about" class="tab-content hidden space-y-4">
+            <h2 class="text-2xl font-bold text-white">❓ About Elismandate</h2>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-slate-300 text-sm leading-relaxed space-y-3">
+                <p><strong>Elismandate</strong> is a premier, hyper-optimized unified network utility engine engineered specifically to strip media formatting boundaries.</p>
+                <p>By bypassing heavy social video tracking payloads across platforms like TikTok, YouTube, and Meta platforms, Elismandate lets you extract straight media down to physical hardware partitions gracefully.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 5: PRIVACY POLICY -->
+        <section id="tab-privacy" class="tab-content hidden space-y-4">
+            <h2 class="text-2xl font-bold text-white">🛡️ Privacy Policy</h2>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-slate-400 text-xs space-y-3 leading-relaxed">
+                <p class="font-semibold text-slate-200 text-sm">Data Handling Commitments</p>
+                <p>Elismandate strictly implements secure transient passthrough extraction protocols. We do not aggregate metadata streams, log target user tracking identifiers, or warehouse source payloads onto permanent internal cloud registers.</p>
+                <p>All operations pass clean cryptographic structures down to standard platform browsers natively.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 6: CONTACT -->
+        <section id="tab-contact" class="tab-content hidden space-y-4">
+            <h2 class="text-2xl font-bold text-white">📞 Developer Support Matrix</h2>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-6">
+                <div class="mx-auto w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 text-2xl">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">Need Engineering Assistance?</h3>
+                    <p class="text-sm text-slate-400 mt-1">Connect with operational support lines instantly regarding core software performance.</p>
+                </div>
+                <div class="bg-slate-950 p-4 rounded-xl inline-block border border-slate-800">
+                    <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Direct Communication Line</p>
+                    <a href="tel:08066821979" class="text-xl font-mono font-bold text-blue-400 hover:underline block mt-1">08066821979</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- TAB SWITCHING ENGINE SCRIPT -->
+    <script>
+        let currentActiveUrl = "";
+        let currentActiveTitle = "";
+
+        function switchTab(tabId) {
+            // Hide all tab content components
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.replace('block', 'hidden'));
+            
+            // Show selected tab content component
+            document.getElementById('tab-' + tabId).classList.replace('hidden', 'block');
+            
+            // Revert all sidebar nav button layout appearances
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('active-link');
+                btn.classList.add('text-slate-400');
+            });
+            
+            // Highlight current button node configuration
+            const targetBtn = document.getElementById('nav-' + tabId);
+            targetBtn.classList.add('active-link');
+            targetBtn.classList.remove('text-slate-400');
+        }
+
+        async function processVideo() {
+            const urlInput = document.getElementById('videoUrl').value;
+            const resultBox = document.getElementById('resultBox');
+            const statusText = document.getElementById('statusText');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const videoTitle = document.getElementById('videoTitle');
+
+            if (!urlInput.trim()) {
+                alert('Please supply a valid URL parameter string first.');
+                return;
+            }
+
+            statusText.classList.remove('hidden');
+            resultBox.classList.add('hidden');
+
+            try {
+                const response = await fetch('/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: urlInput })
+                });
+                
+                const data = await response.json();
+                statusText.classList.add('hidden');
+
+                if (data.success) {
+                    videoTitle.innerText = data.title;
+                    downloadBtn.href = data.download_url;
+                    
+                    // Keep tracking states temporarily
+                    currentActiveUrl = data.download_url;
+                    currentActiveTitle = data.title;
+                    
+                    resultBox.classList.remove('hidden');
+                } else {
+                    alert('Extraction fault: ' + (data.error || 'Check source endpoint structures.'));
+                }
+            } catch (err) {
+                statusText.classList.add('hidden');
+                alert('Fatal interface drop while connecting to extraction framework.');
+            }
+        }
+
+        function saveToHistory() {
+            const allowHistory = document.getElementById('historyToggle').checked;
+            if(!allowHistory || !currentActiveTitle) return;
+
+            const emptyPrompt = document.getElementById('emptyHistory');
+            if(emptyPrompt) emptyPrompt.remove();
+
+            const container = document.getElementById('historyList');
+            const item = document.createElement('div');
+            item.className = "flex justify-between items-center bg-slate-900 border border-slate-800 p-3.5 rounded-xl text-sm";
+            item.innerHTML = `
+                <div class="truncate max-w-[70%]">
+                    <i class="fa-solid fa-video text-slate-500 mr-2"></i>
+                    <span class="font-medium text-slate-300">${currentActiveTitle}</span>
+                </div>
+                <a href="${currentActiveUrl}" target="_blank" download class="text-xs bg-slate-800 text-blue-400 hover:bg-blue-600 hover:text-white px-3 py-1.5 rounded-lg transition font-medium">Re-open Link</a>
+            `;
+            container.prepend(item);
+        }
+    </script>
+</body>
+</html>
