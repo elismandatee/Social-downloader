@@ -21,6 +21,7 @@ def download():
             'format': 'best',
             'quiet': True,
             'no_warnings': True,
+            'cookiefile': 'cookies.txt',
             'allowed_extractors': ['default', 'youtube', 'tiktok', 'instagram', 'facebook', 'twitter'],
         }
         
