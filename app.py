@@ -10,18 +10,24 @@ def home():
 
 @app.route('/download', methods=['POST'])
 def download():
+        # Look for this in your code:
     data = request.get_json()
     video_url = data.get('url')
 
     if not video_url:
         return jsonify({'error': 'Please provide a valid URL'}), 400
 
+    # ADD THIS NEW BLOCK RIGHT BELOW IT:
+    if 'youtube.com' in video_url or 'youtu.be' in video_url:
+        return jsonify({'error': 'YouTube downloads are not supported'}), 403
+        
+
     try:
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
             'cookiefile': 'cookies.txt',
-            'allowed_extractors': ['default', 'youtube', 'tiktok', 'instagram', 'facebook', 'twitter'],
+            'allowed_extractors': ['default', 'tiktok', 'instagram', 'facebook', 'twitter'],
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
