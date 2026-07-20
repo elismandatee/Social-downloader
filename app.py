@@ -26,8 +26,7 @@ def download():
             'no_warnings': True,
             'cookiefile': '/tmp/cookies.txt',
             'allowed_extractors': ['default', 'tiktok', 'instagram', 'facebook', 'twitter', 'x'],
-            'format': 'bestvideo*+bestaudio/best',
-            'merge_output_format': 'mp4',
+            'format': 'best',  # Forces selection of combined streams with audio included
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -39,6 +38,7 @@ def download():
 
         if info.get('formats'):
             for f in info['formats']:
+                # Filter for valid video streams that include audio or standard combined formats
                 if f.get('vcodec') != 'none' and f.get('url'):
                     height = f.get('height')
                     if height:
@@ -53,7 +53,14 @@ def download():
                             'type': 'video'
                         })
 
-            formats_available = sorted(formats_available, key=lambda x: int(''.join(filter(str.isdigit, x['quality'])) or 0), reverse=True)
+            # Remove duplicate qualities to keep the list clean and fast
+            seen_qualities = set()
+            unique_formats = []
+            for item in sorted(formats_available, key=lambda x: int(''.join(filter(str.isdigit, x['quality'])) or 0), reverse=True):
+                if item['quality'] not in seen_qualities:
+                    seen_qualities.add(item['quality'])
+                    unique_formats.append(item)
+            formats_available = unique_formats
 
         if not formats_available and 'entries' in info:
             first_entry = info['entries'][0] if info['entries'] else {}
@@ -97,8 +104,8 @@ def proxy_download():
         clean_filename = "".join([c for c in filename if c.isalpha() or c.isdigit() or c in '._-']).strip()
         
         headers = {
-            'Content-Disposition': f'attachment; filename="{clean_filename or "media"}";',
-            'Content-Type': req.headers.get('Content-Type', 'application/octet-stream')
+            'Content-Disposition': f'attachment; filename="{clean_filename or "media"}.mp4";',
+            'Content-Type': req.headers.get('Content-Type', 'video/mp4')
         }
 
         return Response(req.iter_content(chunk_size=1024*1024), headers=headers)
@@ -107,3 +114,4 @@ def proxy_download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
