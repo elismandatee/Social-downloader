@@ -29,8 +29,6 @@ def download():
     'cookiefile': '/tmp/cookies.txt', # Or your secure path
     'allowed_extractors': ['default', 'tiktok', 'instagram', 'facebook', 'twitter', 'x'],
 }
-
-
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
             title = info.get('title', 'Social_Media_Download')
