@@ -24,11 +24,12 @@ def download():
 
     try:
         ydl_opts = {
-            'quiet': True,
-            'no_warnings': True,
-            'cookiefile': 'cookies.txt',
-            'allowed_extractors': ['default', 'tiktok', 'instagram', 'facebook', 'twitter'],
-        }
+    'quiet': True,
+    'no_warnings': True,
+    'cookiefile': '/tmp/cookies.txt', # Or your secure path
+    'allowed_extractors': ['default', 'tiktok', 'instagram', 'facebook', 'twitter', 'x'],
+}
+
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
