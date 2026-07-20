@@ -26,6 +26,8 @@ def download():
             'no_warnings': True,
             'cookiefile': '/tmp/cookies.txt',
             'allowed_extractors': ['default', 'tiktok', 'instagram', 'facebook', 'twitter', 'x'],
+            'format': 'bestvideo*+bestaudio/best',
+            'merge_output_format': 'mp4',
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -105,4 +107,3 @@ def proxy_download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-    
