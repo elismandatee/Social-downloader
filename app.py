@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, Response
 import yt_dlp
 import requests
+import re
 
 app = Flask(__name__)
 
@@ -42,25 +43,20 @@ def download():
             except Exception:
                 pass
 
-        # 2. Dedicated Instagram Handler (Completely bypasses yt-dlp login blocks)
+        # 2. Dedicated Instagram Handler using direct mobile user-agent scraping
         elif 'instagram.com' in video_url.lower():
             try:
-                # Using a dedicated public JSON extractor API endpoint for Instagram
-                ig_api = f"https://api.cobalt.tools/api/json"
-                payload = {"url": video_url}
                 headers = {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
                 }
-                r = requests.post(ig_api, json=payload, headers=headers, timeout=15)
+                r = requests.get(video_url, headers=headers, timeout=15)
                 if r.status_code == 200:
-                    res_json = r.json()
-                    direct_vid = res_json.get('url') or (res_json.get('picker') and res_json['picker'][0].get('url'))
-                    title = "Instagram_Media"
-                    
-                    if direct_vid:
-                        proxy_target = f"/proxy-download?url={requests.utils.quote(direct_vid)}&title={requests.utils.quote(title)}"
+                    # Search for og:video meta tags which Instagram embeds for public link previews
+                    video_match = re.search(r'<meta property="og:video" content="([^"]+)"', r.text)
+                    if video_match:
+                        raw_vid_url = video_match.group(1).replace('&amp;', '&')
+                        proxy_target = f"/proxy-download?url={requests.utils.quote(raw_vid_url)}&title=Instagram_Video"
                         formats_available.append({
                             'quality': 'HD Video',
                             'url': proxy_target,
@@ -69,7 +65,7 @@ def download():
             except Exception:
                 pass
 
-        # 3. Standard yt-dlp extraction strictly for Facebook and X (Twitter)
+        # 3. Standard yt-dlp extraction for Facebook and X (Twitter)
         if not formats_available and not ('instagram.com' in video_url.lower() or 'tiktok.com' in video_url.lower()):
             ydl_opts = {
                 'quiet': True,
@@ -161,4 +157,4 @@ def proxy_download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-                    
+                
