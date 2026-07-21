@@ -25,25 +25,25 @@
                 <span class="text-xl font-black tracking-wider bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Elismandate</span>
             </div>
 
-            <!-- Navigation Links -->
+            <!-- Navigation links -->
             <div class="space-y-1.5">
-                <button onclick="switchTab('home')" id="nav-home" class="active-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all">
-                    <i class="fa-solid fa-house text-base w-5 text-center"></i> ⭐️ Home
+                <button onclick="switchTab('home')" id="nav-home" class="active-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-left">
+                    <i class="fa-solid fa-house text-base w-5 text-center"></i> $\star$ Home
                 </button>
-                <button onclick="switchTab('history')" id="nav-history" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
-                    <i class="fa-solid fa-folder-open text-base w-5 text-center"></i> 📁 Download History
+                <button onclick="switchTab('history')" id="nav-history" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                    <i class="fa-solid fa-folder-open text-base w-5 text-center"></i> Download History
                 </button>
-                <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
-                    <i class="fa-solid fa-gear text-base w-5 text-center"></i> ⚙️ Settings
+                <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                    <i class="fa-solid fa-gear text-base w-5 text-center"></i> Settings
                 </button>
-                <button onclick="switchTab('about')" id="nav-about" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
-                    <i class="fa-solid fa-circle-info text-base w-5 text-center"></i> ❓ About
+                <button onclick="switchTab('about')" id="nav-about" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                    <i class="fa-solid fa-circle-info text-base w-5 text-center"></i> ? About
                 </button>
-                <button onclick="switchTab('privacy')" id="nav-privacy" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
-                    <i class="fa-solid fa-shield-halved text-base w-5 text-center"></i> 🛡️ Privacy Policy
+                <button onclick="switchTab('privacy')" id="nav-privacy" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                    <i class="fa-solid fa-shield-halved text-base w-5 text-center"></i> Privacy Policy
                 </button>
-                <button onclick="switchTab('contact')" id="nav-contact" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
-                    <i class="fa-solid fa-phone text-base w-5 text-center"></i> 📞 Contact
+                <button onclick="switchTab('contact')" id="nav-contact" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                    <i class="fa-solid fa-phone text-base w-5 text-center"></i> $\mathbf{C}$ Contact
                 </button>
             </div>
         </div>
@@ -56,39 +56,38 @@
 
     <!-- MAIN APP/CREATOR CONTENT PANEL -->
     <main class="flex-1 p-4 md:p-8 mx-auto max-w-4xl mx-auto w-full transition-all duration-300">
-        
+
         <!-- SECTION 1: HOME PAGE (DOWNLOADER & SEARCH) -->
         <section id="tab-home" class="tab-content block space-y-6">
             <div class="text-center py-6">
-                <h1 class="text-3xl font-extrabold text-white tracking-tight">All-in-One Video Downloader</h1>
+                <h1 class="text-3xl font-bold text-slate-100 tracking-tight">All-in-One Video Downloader</h1>
                 <p class="text-slate-400 mt-2 text-sm max-w-md mx-auto">Download your favorite clips from premium social media feeds instantly.</p>
             </div>
 
             <!-- Search Bar / Link Input Input -->
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl space-y-4">
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                         <i class="fa-solid fa-link"></i>
                     </div>
-                    <input type="text" id="videoUrl" placeholder="Paste social video URL link here..."
-                        class="w-full bg-slate-950 pl-11 pr-4 py-4 rounded-xl border border-slate-800 focus:outline-none focus:border-blue-600 text-slate-100 placeholder-slate-600 text-sm font-medium">
+                    <input type="text" id="videoUrl" placeholder="Paste social video URL link here..." 
+                        class="w-full bg-slate-950 pl-11 pr-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 text-slate-200 placeholder-slate-500 border border-slate-800">
                 </div>
-
-                <button onclick="processVideo()" id="FetchBtn"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 cursor-pointer">
+                <button onclick="processVideo()" id="fetchBtn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-circle-down"></i> Fetch & Extract Video
                 </button>
             </div>
 
             <!-- Global Status Loader -->
-            <div id="statusText" class="hidden text-center p-6 bg-slate-900 border border-slate-800/80 rounded-2xl animate-pulse">
+            <div id="statusText" class="hidden text-center p-6 bg-slate-900 border border-slate-800/80 rounded-2xl animate-pulse space-y-3">
                 <i class="fa-solid fa-spinner fa-spin text-blue-500 text-xl mb-2"></i>
                 <p class="text-blue-400 text-sm font-medium">Analyzing URL signatures... please hold on...</p>
             </div>
 
             <!-- Result Payload Box -->
             <div id="resultBox" class="hidden bg-slate-900 border border-emerald-500/20 p-6 rounded-2xl shadow-xl space-y-4">
-                <div class="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                <div class="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
                     <i class="fa-solid fa-circle-check text-xl"></i>
                 </div>
                 <div class="text-center">
@@ -103,19 +102,19 @@
 
         <!-- SECTION 2: DOWNLOAD HISTORY -->
         <section id="tab-history" class="tab-content hidden space-y-4">
-            <h2 class="text-2xl font-bold text-white mb-2">📁 Download History</h2>
-            <p class="text-slate-400 text-sm mb-6">Track files you've pulled through the Elismandate core download stream engine.</p>
-            <div id="historyList">
+            <h2 class="text-2xl font-bold text-white mb-2">$\gg$ Download History</h2>
+            <p class="text-slate-400 text-sm mb-6">Track files you've pulled through the Elismandate core download stream.</p>
+            <div id="historylist">
                 <!-- Fallback when dynamic storage is clear -->
                 <div id="emptyHistory" class="text-center py-12 bg-slate-900 border border-slate-800 rounded-2xl text-slate-500">
-                    <i class="fa-solid fa-folder-open text-3xl mb-3 block text-slate-600"></i> No historical downloads detected yet.
+                    <i class="fa-solid fa-folder-open text-3xl mb-3 block text-slate-600"></i> No historical downloads logged yet.
                 </div>
             </div>
         </section>
 
         <!-- SECTION 3: SETTINGS -->
         <section id="tab-settings" class="tab-content hidden space-y-6">
-            <h2 class="text-2xl font-bold text-white">⚙️ App Configurations</h2>
+            <h2 class="text-2xl font-bold text-white">$\gg$ App Configurations</h2>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
                 <div class="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800">
                     <div>
@@ -127,7 +126,7 @@
                 <div class="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800">
                     <div>
                         <p class="text-sm font-semibold">Local Session Storage</p>
-                        <p class="text-xs text-slate-500">Persist downloaded cache histories logs natively on hardware panels.</p>
+                        <p class="text-xs text-slate-500">Persist downloaded cache histories logs natively on hardware memory.</p>
                     </div>
                     <input type="checkbox" checked id="historyToggle" class="w-4 h-4 accent-blue-600">
                 </div>
@@ -136,35 +135,35 @@
 
         <!-- SECTION 4: ABOUT PAGE -->
         <section id="tab-about" class="tab-content hidden space-y-4">
-            <h2 class="text-2xl font-bold text-white">❓ About Elismandate</h2>
+            <h2 class="text-2xl font-bold text-white">$\gg$ About Elismandate</h2>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-slate-300 text-sm leading-relaxed space-y-3">
-                <p><strong>Elismandate</strong> is a premier, hyper-optimized unified network utility engine engineered specifically to provide direct, clean data streams.</p>
-                <p>By bypassing heavy social video tracking payloads across platforms like TikTok, Facebook, and Meta platforms, media renders instantly.</p>
+                <p><strong>Elismandate</strong> is a premier, hyper-optimized unified network utility engine engineered by <strong>Ogbonna Elijah Elem</strong>.</p>
+                <p>By bypassing heavy social video tracking payloads across platforms like TikTok, Facebook, and Meta properties, users achieve frictionless extraction pipelines on mobile infrastructure instantly.</p>
             </div>
         </section>
 
         <!-- SECTION 5: PRIVACY POLICY -->
         <section id="tab-privacy" class="tab-content hidden space-y-4">
-            <h2 class="text-2xl font-bold text-white">🛡️ Privacy Policy</h2>
+            <h2 class="text-2xl font-bold text-white">$\gg$ Privacy Policy</h2>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-slate-400 text-xs space-y-3 leading-relaxed">
                 <p class="font-semibold text-slate-200">Data Handling Commitments</p>
-                <p>Elismandate strictly implements secure transient passthrough extraction protocols. We do not aggregate personal credentials.</p>
+                <p>Elismandate strictly implements secure transient passthrough extraction protocols. We do not aggregate personal credentials or maintain raw server media mirrors.</p>
                 <p>All operations pass clean cryptographic structures down to standard platform browsers natively.</p>
             </div>
         </section>
 
         <!-- SECTION 6: CONTACT -->
         <section id="tab-contact" class="tab-content hidden space-y-4">
-            <h2 class="text-2xl font-bold text-white">📞 Developer Support Matrix</h2>
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-6">
-                <div class="mx-auto w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
-                    <i class="fa-solid fa-headset text-2xl"></i>
+            <h2 class="text-2xl font-bold text-white">$\gg$ Developer Support Matrix</h2>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+                <div class="mx-auto w-16 h-16 rounded-full bg-blue-600/10 flex items-center justify-center text-blue-500 text-2xl">
+                    <i class="fa-solid fa-headset"></i>
                 </div>
-                <div>
+                <div class="text-center">
                     <h3 class="text-lg font-bold text-white">Need Engineering Assistance?</h3>
-                    <p class="text-xs text-slate-400 mt-1">Connect with operational support lines instantly regarding core application bugs.</p>
+                    <p class="text-xs text-slate-400 mt-1">Connect with operational support lines instantly regarding core routing questions.</p>
                 </div>
-                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 inline-block">
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 inline-block w-full text-center">
                     <p class="text-xs uppercase tracking-widest font-semibold text-slate-500">Direct Communication Line</p>
                     <a href="tel:08166232081" class="text-xl font-mono font-bold text-blue-400 hover:underline block mt-1">08166232081</a>
                 </div>
@@ -173,7 +172,7 @@
 
     </main>
 
-    <!-- TAB SWITCHING ENGINE SCRIPT -->
+    <!-- TAB SWITCHING & DOWNLOAD ENGINE SCRIPT -->
     <script>
         let currentActiveUrl = "";
         let currentActiveTitle = "";
@@ -197,7 +196,9 @@
             const videoTitle = document.getElementById('videoTitle');
             const buttonsContainer = document.getElementById('qualityButtonsContainer');
 
-            if (!urlInput.value.trim()) {
+            const videoUrl = urlInput.value.trim();
+
+            if (!videoUrl) {
                 alert('Please supply a valid URL parameter string first.');
                 return;
             }
@@ -206,26 +207,62 @@
             resultBox.classList.add('hidden');
             buttonsContainer.innerHTML = '';
 
+            // Handle Instagram directly from client-side to bypass server-side IP blocks
+            if (videoUrl.includes('instagram.com')) {
+                try {
+                    let igRes = await fetch('https://api.cobalt.tools/api/json', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ url: videoUrl })
+                    });
+                    let igData = await igRes.json();
+                    let directDownload = igData.url || (igData.picker && igData.picker[0].url);
+
+                    if (directDownload) {
+                        statusText.classList.add('hidden');
+                        videoTitle.innerText = "Instagram_Media.mp4";
+                        currentActiveUrl = directDownload;
+                        currentActiveTitle = "Instagram Video";
+
+                        let btn = document.createElement('a');
+                        btn.href = directDownload;
+                        btn.setAttribute('target', '_blank');
+                        btn.setAttribute('download', 'Instagram_Video.mp4');
+                        btn.className = "w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-md";
+                        btn.innerHTML = `<i class="fa-solid fa-fa-video"></i> Download HD Video`;
+                        
+                        buttonsContainer.appendChild(btn);
+                        resultBox.classList.remove('hidden');
+                        saveToHistory();
+                        return;
+                    }
+                } catch (e) {
+                    // Fall through to backend handler if client-side API fails
+                }
+            }
+
             try {
-                const response = await fetch('/download', {
+                let response = await fetch('/download', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: urlInput.value })
+                    body: JSON.stringify({ url: videoUrl })
                 });
 
-                const data = await response.json();
+                let data = await response.json();
                 statusText.classList.add('hidden');
 
                 if (data.success) {
                     videoTitle.innerText = data.title;
 
                     data.formats.forEach(item => {
-                        // Render standard anchor tags styled as buttons for reliable browser download launching
-                        const btn = document.createElement('a');
+                        let btn = document.createElement('a');
                         btn.href = item.url;
                         btn.setAttribute('target', '_blank');
                         btn.setAttribute('download', 'video.mp4');
-                        btn.className = "w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md cursor-pointer";
+                        btn.className = "w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-md";
                         btn.innerHTML = `<i class="fa-solid fa-video"></i> Download ${item.quality}`;
 
                         btn.onclick = () => {
@@ -249,24 +286,24 @@
 
         function saveToHistory() {
             const allowHistory = document.getElementById('historyToggle').checked;
-            if(!allowHistory || !currentActiveTitle) return;
+            if (!allowHistory || !currentActiveTitle) return;
 
             const emptyPrompt = document.getElementById('emptyHistory');
-            if(emptyPrompt) emptyPrompt.remove();
+            if (emptyPrompt) emptyPrompt.remove();
 
-            const container = document.getElementById('historyList');
-            const item = document.createElement('div');
-            item.className = "flex justify-between items-center bg-slate-900 border border-slate-800 p-3.5 rounded-xl text-sm mb-2.5";
+            const container = document.getElementById('historylist');
+            let item = document.createElement('div');
+            item.className = "flex justify-between items-center bg-slate-900 border border-slate-800 p-4 rounded-xl mb-3";
             item.innerHTML = `
                 <div class="truncate max-w-[70%]">
                     <i class="fa-solid fa-video text-slate-500 mr-2"></i>
                     <span class="font-medium text-slate-300">${currentActiveTitle}</span>
                 </div>
-                <a href="${currentActiveUrl}" target="_blank" download class="text-xs bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white px-3 py-1.5 rounded-lg font-medium transition-all">Download Again</a>
+                <a href="${currentActiveUrl}" target="_blank" download class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-semibold transition">Download</a>
             `;
             container.prepend(item);
         }
     </script>
 </body>
-    </html>
-            
+                    </html>
+                                                                               
