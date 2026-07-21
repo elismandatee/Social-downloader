@@ -20,72 +20,80 @@ def download():
         return jsonify({'error': 'YouTube downloads are not supported'}), 403
 
     try:
-        ydl_opts = {
-            'quiet': True,
-            'no_warnings': True,
-            'socket_timeout': 30,
-            'format': 'best',
-        }
-
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(video_url, download=False)
-            title = info.get('title', 'Social_Media_Download')
-
         formats_available = []
-        seen_qualities = set()
+        title = "Social_Media_Download"
 
-        if info.get('formats'):
-            for f in info['formats']:
-                if f.get('url') and f.get('vcodec') != 'none':
-                    height = f.get('height')
-                    if height and isinstance(height, int):
-                        if height >= 1080: label = "HD 1080p"
-                        elif height >= 720: label = "HD 720p"
-                        elif height >= 480: label = "SD 480p"
-                        else: label = f"{height}p"
-                    else:
-                        label = "HD Video"
-
-                    if label in seen_qualities:
-                        continue
-                    seen_qualities.add(label)
-
-                    target_url = f['url']
-                    # Route TikTok and X through the backend proxy to avoid 403 token expiration blocks
-                    if any(domain in video_url.lower() for domain in ['tiktok.com', 'twitter.com', 'x.com']):
-                        target_url = f"/proxy-download?url={requests.utils.quote(target_url)}&title={requests.utils.quote(title)}"
-
-                    formats_available.append({
-                        'quality': label,
-                        'url': target_url,
-                        'type': 'video'
-                    })
-
-        if not formats_available and info.get('url'):
-            fallback_url = info.get('url')
-            if any(domain in video_url.lower() for domain in ['tiktok.com', 'twitter.com', 'x.com']):
-                fallback_url = f"/proxy-download?url={requests.utils.quote(fallback_url)}&title={requests.utils.quote(title)}"
+        # Special direct handling for TikTok to completely bypass server-side bot blocks
+        if 'tiktok.com' in video_url.lower():
+            api_endpoint = f"https://tikwm.com/api/?url={requests.utils.quote(video_url)}"
+            res = requests.get(api_endpoint, timeout=15).json()
             
-            formats_available.append({
-                'quality': 'HD Video',
-                'url': fallback_url,
-                'type': 'video'
-            })
-
-        if not formats_available and 'entries' in info:
-            for entry in info['entries']:
-                if entry.get('url'):
-                    e_url = entry.get('url')
-                    if any(domain in video_url.lower() for domain in ['tiktok.com', 'twitter.com', 'x.com']):
-                        e_url = f"/proxy-download?url={requests.utils.quote(e_url)}&title={requests.utils.quote(title)}"
+            if res.get('code') == 0 and res.get('data'):
+                vid_data = res['data']
+                title = vid_data.get('title', 'TikTok_Video')
+                play_addr = vid_data.get('play')
+                
+                if play_addr:
+                    proxy_target = f"/proxy-download?url={requests.utils.quote(play_addr)}&title={requests.utils.quote(title)}"
                     formats_available.append({
-                        'quality': 'Media Item',
-                        'url': e_url,
+                        'quality': 'HD Video (No Watermark)',
+                        'url': proxy_target,
                         'type': 'video'
                     })
+        
+        # Standard yt-dlp extraction for Facebook, Instagram, and X
+        if not formats_available:
+            ydl_opts = {
+                'quiet': True,
+                'no_warnings': True,
+                'socket_timeout': 30,
+                'format': 'best',
+            }
+
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(video_url, download=False)
+                title = info.get('title', 'Social_Media_Download')
+
+            seen_qualities = set()
+            if info.get('formats'):
+                for f in info['formats']:
+                    if f.get('url') and f.get('vcodec') != 'none':
+                        height = f.get('height')
+                        if height and isinstance(height, int):
+                            if height >= 1080: label = "HD 1080p"
+                            elif height >= 720: label = "HD 720p"
+                            elif height >= 480: label = "SD 480p"
+                            else: label = f"{height}p"
+                        else:
+                            label = "HD Video"
+
+                        if label in seen_qualities:
+                            continue
+                        seen_qualities.add(label)
+
+                        target_url = f['url']
+                        if 'twitter.com' in video_url.lower() or 'x.com' in video_url.lower():
+                            target_url = f"/proxy-download?url={requests.utils.quote(target_url)}&title={requests.utils.quote(title)}"
+
+                        formats_available.append({
+                            'quality': label,
+                            'url': target_url,
+                            'type': 'video'
+                        })
+
+            if not formats_available and info.get('url'):
+                fallback_url = info.get('url')
+                if 'twitter.com' in video_url.lower() or 'x.com' in video_url.lower():
+                    fallback_url = f"/proxy-download?url={requests.utils.quote(fallback_url)}&title={requests.utils.quote(title)}"
+                
+                formats_available.append({
+                    'quality': 'HD Video',
+                    'url': fallback_url,
+                    'type': 'video'
+                })
 
         if not formats_available:
-            return jsonify({'error': 'Could not extract a valid media stream.'}), 400
+            return jsonify({'error': 'Could not extract a valid media stream. Check the link.'}), 400
 
         return jsonify({
             'success': True,
@@ -125,4 +133,4 @@ def proxy_download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-                    
+                
