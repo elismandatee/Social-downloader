@@ -20,14 +20,10 @@ def download():
         return jsonify({'error': 'YouTube downloads are not supported'}), 403
 
     try:
-        # Hardened configuration optimized for social media extraction reliability
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
             'socket_timeout': 30,
-            'extractor_args': {
-                'tiktok': {'app_info': '7.0.0'},
-            },
             'format': 'best',
         }
 
@@ -55,8 +51,7 @@ def download():
                     seen_qualities.add(label)
 
                     target_url = f['url']
-                    
-                    # For TikTok and X, route through the streaming proxy to bypass geo-blocks and hotlink protections
+                    # Route TikTok and X through the backend proxy to avoid 403 token expiration blocks
                     if any(domain in video_url.lower() for domain in ['tiktok.com', 'twitter.com', 'x.com']):
                         target_url = f"/proxy-download?url={requests.utils.quote(target_url)}&title={requests.utils.quote(title)}"
 
@@ -66,7 +61,6 @@ def download():
                         'type': 'video'
                     })
 
-        # Universal fallback stream
         if not formats_available and info.get('url'):
             fallback_url = info.get('url')
             if any(domain in video_url.lower() for domain in ['tiktok.com', 'twitter.com', 'x.com']):
@@ -113,12 +107,10 @@ def proxy_download():
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
             'Range': 'bytes=0-'
         }
         
-        req = requests.get(media_url, headers=headers, stream=True, timeout=30)
+        req = requests.get(media_url, headers=headers, stream=True, timeout=35)
         clean_filename = "".join([c for c in filename if c.isalpha() or c.isdigit() or c in '._-']).strip()
         
         response_headers = {
@@ -129,8 +121,8 @@ def proxy_download():
         return Response(req.iter_content(chunk_size=1024*1024), headers=response_headers)
         
     except Exception as e:
-        return f"Download stream compilation broke: {str(e)}", 500
+        return f"Proxy stream failed: {str(e)}", 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-                
+                    
