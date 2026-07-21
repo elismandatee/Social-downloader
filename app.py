@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify, Response
 import yt_dlp
 import requests
-import re
 
 app = Flask(__name__)
 
@@ -43,29 +42,56 @@ def download():
             except Exception:
                 pass
 
-        # 2. Dedicated Instagram Handler using direct mobile user-agent scraping
+        # 2. Dedicated Instagram Handler using public proxy resolution
         elif 'instagram.com' in video_url.lower():
             try:
+                # Use a stable public backend resolver to completely bypass Instagram IP rate-limits
+                api_url = f"https://api.cobalt.tools/api/json"
+                payload = {"url": video_url, "vQuality": "720"}
                 headers = {
-                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
                 }
-                r = requests.get(video_url, headers=headers, timeout=15)
+                r = requests.post(api_url, json=payload, headers=headers, timeout=15)
                 if r.status_code == 200:
-                    # Search for og:video meta tags which Instagram embeds for public link previews
-                    video_match = re.search(r'<meta property="og:video" content="([^"]+)"', r.text)
-                    if video_match:
-                        raw_vid_url = video_match.group(1).replace('&amp;', '&')
-                        proxy_target = f"/proxy-download?url={requests.utils.quote(raw_vid_url)}&title=Instagram_Video"
-                        formats_available.append({
-                            'quality': 'HD Video',
-                            'url': proxy_target,
-                            'type': 'video'
-                        })
+                    res_json = r.json()
+                    status = res_json.get('status')
+                    if status == 'stream' or status == 'redirect' or status == 'picker':
+                        direct_vid = res_json.get('url')
+                        if not direct_vid and res_json.get('picker'):
+                            direct_vid = res_json['picker'][0].get('url')
+                        
+                        if direct_vid:
+                            title = "Instagram_Media"
+                            proxy_target = f"/proxy-download?url={requests.utils.quote(direct_vid)}&title={requests.utils.quote(title)}"
+                            formats_available.append({
+                                'quality': 'HD Video',
+                                'url': proxy_target,
+                                'type': 'video'
+                            })
             except Exception:
                 pass
 
-        # 3. Standard yt-dlp extraction for Facebook and X (Twitter)
+            # Fallback public instance if primary resolver fails
+            if not formats_available:
+                try:
+                    fallback_api = f"https://deliriussapi-v2.vercel.app/download/instagram?url={requests.utils.quote(video_url)}"
+                    r = requests.get(fallback_api, timeout=15).json()
+                    if r.get('status') and r.get('data'):
+                        items = r['data']
+                        direct_vid = items[0].get('url') if isinstance(items, list) else items.get('url')
+                        if direct_vid:
+                            proxy_target = f"/proxy-download?url={requests.utils.quote(direct_vid)}&title=Instagram_Video"
+                            formats_available.append({
+                                'quality': 'HD Video',
+                                'url': proxy_target,
+                                'type': 'video'
+                            })
+                except Exception:
+                    pass
+
+        # 3. Standard yt-dlp extraction strictly for Facebook and X (Twitter)
         if not formats_available and not ('instagram.com' in video_url.lower() or 'tiktok.com' in video_url.lower()):
             ydl_opts = {
                 'quiet': True,
@@ -157,4 +183,4 @@ def proxy_download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-                
+                    
