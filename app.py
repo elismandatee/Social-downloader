@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, jsonify, Response
+from flask import Flask, render_template, request, jsonify
 import yt_dlp
-import os
 
 app = Flask(__name__)
 
@@ -46,31 +45,26 @@ def download():
                     else:
                         label = "HD Video"
 
-                    # Route every platform through our robust stream compiler to guarantee playback
-                    proxy_target = f"/proxy-download?url={f['url']}&title={title}"
-
                     formats_available.append({
                         'quality': label,
-                        'url': proxy_target,
+                        'url': f['url'],
                         'type': 'video'
                     })
 
-        # Universal fallback stream
+        # Universal fallback stream if formats list is empty
         if not formats_available and info.get('url'):
-            fallback_target = f"/proxy-download?url={info.get('url')}&title={title}"
             formats_available.append({
                 'quality': 'HD Video',
-                'url': fallback_target,
+                'url': info.get('url'),
                 'type': 'video'
             })
 
         if not formats_available and 'entries' in info:
             for entry in info['entries']:
                 if entry.get('url'):
-                    entry_target = f"/proxy-download?url={entry.get('url')}&title={title}"
                     formats_available.append({
                         'quality': 'Media Item',
-                        'url': entry_target,
+                        'url': entry.get('url'),
                         'type': 'video'
                     })
 
@@ -86,37 +80,6 @@ def download():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/proxy-download')
-def proxy_download():
-    media_url = request.args.get('url')
-    filename = request.args.get('title', 'download')
-
-    if not media_url:
-        return "Missing media target URL", 400
-
-    try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': '*/*',
-            'Accept-Encoding': 'identity',
-            'Connection': 'keep-alive'
-        }
-        
-        # Stream data securely using requests with custom spoofed headers
-        with requests.get(media_url, headers=headers, stream=True, timeout=30) as req:
-            req.raise_for_status()
-            clean_filename = "".join([c for c in filename if c.isalpha() or c.isdigit() or c in '._-']).strip()
-            
-            response_headers = {
-                'Content-Disposition': f'attachment; filename="{clean_filename or "media"}.mp4";',
-                'Content-Type': 'video/mp4'
-            }
-
-            return Response(req.iter_content(chunk_size=1024*1024), headers=response_headers)
-            
-    except Exception as e:
-        return f"Download stream compilation broke: {str(e)}", 500
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-                
+    
