@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify, Response
 import yt_dlp
 import requests
-import re
 
 app = Flask(__name__)
 
@@ -26,34 +25,39 @@ def download():
 
         # 1. Dedicated TikTok Handler
         if 'tiktok.com' in video_url.lower():
-            api_endpoint = f"https://tikwm.com/api/?url={requests.utils.quote(video_url)}"
-            res = requests.get(api_endpoint, timeout=15).json()
-            
-            if res.get('code') == 0 and res.get('data'):
-                vid_data = res['data']
-                title = vid_data.get('title', 'TikTok_Video')
-                play_addr = vid_data.get('play')
-                
-                if play_addr:
-                    proxy_target = f"/proxy-download?url={requests.utils.quote(play_addr)}&title={requests.utils.quote(title)}"
-                    formats_available.append({
-                        'quality': 'HD Video (No Watermark)',
-                        'url': proxy_target,
-                        'type': 'video'
-                    })
+            try:
+                api_endpoint = f"https://tikwm.com/api/?url={requests.utils.quote(video_url)}"
+                res = requests.get(api_endpoint, timeout=15).json()
+                if res.get('code') == 0 and res.get('data'):
+                    vid_data = res['data']
+                    title = vid_data.get('title', 'TikTok_Video')
+                    play_addr = vid_data.get('play')
+                    if play_addr:
+                        proxy_target = f"/proxy-download?url={requests.utils.quote(play_addr)}&title={requests.utils.quote(title)}"
+                        formats_available.append({
+                            'quality': 'HD Video (No Watermark)',
+                            'url': proxy_target,
+                            'type': 'video'
+                        })
+            except Exception:
+                pass
 
-        # 2. Dedicated Instagram Handler using public API routing to completely avoid login walls
+        # 2. Dedicated Instagram Handler (Completely bypasses yt-dlp login blocks)
         elif 'instagram.com' in video_url.lower():
             try:
-                # Use a reliable public institutional downloader API mirror for Instagram to bypass cloud blocks
-                ig_api = f"https://labs.writingminds.org/api/instagram?url={requests.utils.quote(video_url)}"
-                headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-                r = requests.get(ig_api, headers=headers, timeout=15)
-                
+                # Using a dedicated public JSON extractor API endpoint for Instagram
+                ig_api = f"https://api.cobalt.tools/api/json"
+                payload = {"url": video_url}
+                headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                }
+                r = requests.post(ig_api, json=payload, headers=headers, timeout=15)
                 if r.status_code == 200:
                     res_json = r.json()
-                    direct_vid = res_json.get('url') or res_json.get('video_url')
-                    title = res_json.get('title', 'Instagram_Reel')
+                    direct_vid = res_json.get('url') or (res_json.get('picker') and res_json['picker'][0].get('url'))
+                    title = "Instagram_Media"
                     
                     if direct_vid:
                         proxy_target = f"/proxy-download?url={requests.utils.quote(direct_vid)}&title={requests.utils.quote(title)}"
@@ -65,30 +69,8 @@ def download():
             except Exception:
                 pass
 
-            # Fallback Instagram embed scraper if API mirror times out
-            if not formats_available:
-                try:
-                    match = re.search(r'/(?:reel|p|tv)/([A-Za-z0-9_-]+)', video_url)
-                    if match:
-                        shortcode = match.group(1)
-                        embed_url = f"https://www.instagram.com/p/{shortcode}/embed/captioned/"
-                        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-                        r = requests.get(embed_url, headers=headers, timeout=10)
-                        
-                        video_match = re.search(r'"video_url"\s*:\s*"([^"]+)"', r.text)
-                        if video_match:
-                            raw_vid_url = video_match.group(1).encode().decode('unicode-escape')
-                            proxy_target = f"/proxy-download?url={requests.utils.quote(raw_vid_url)}&title=Instagram_Reel"
-                            formats_available.append({
-                                'quality': 'HD Video',
-                                'url': proxy_target,
-                                'type': 'video'
-                            })
-                except Exception:
-                    pass
-
-        # 3. Standard yt-dlp extraction for Facebook and X (Twitter)
-        if not formats_available:
+        # 3. Standard yt-dlp extraction strictly for Facebook and X (Twitter)
+        if not formats_available and not ('instagram.com' in video_url.lower() or 'tiktok.com' in video_url.lower()):
             ydl_opts = {
                 'quiet': True,
                 'no_warnings': True,
@@ -139,7 +121,7 @@ def download():
                 })
 
         if not formats_available:
-            return jsonify({'error': 'Could not extract media. Ensure the post is public.'}), 400
+            return jsonify({'error': 'Could not extract media. Ensure the link is public and correct.'}), 400
 
         return jsonify({
             'success': True,
