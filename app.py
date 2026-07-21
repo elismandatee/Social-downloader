@@ -39,13 +39,17 @@ def download():
             for f in info['formats']:
                 if f.get('url') and f.get('vcodec') != 'none':
                     height = f.get('height')
-                    label = f"{height}p" if height else "HD Video"
-                    if height >= 1080: label = "HD 1080p"
-                    elif height >= 720: label = "HD 720p"
-                    elif height >= 480: label = "SD 480p"
+                    
+                    # Safe check preventing NoneType comparison crashes
+                    if height and isinstance(height, int):
+                        if height >= 1080: label = "HD 1080p"
+                        elif height >= 720: label = "HD 720p"
+                        elif height >= 480: label = "SD 480p"
+                        else: label = f"{height}p"
+                    else:
+                        label = "HD Video"
 
                     target_url = f['url']
-                    # Route restricted platforms through proxy to avoid 403 Forbidden errors
                     if is_protected_platform:
                         target_url = f"/proxy-download?url={target_url}&title={title}"
 
@@ -118,3 +122,4 @@ def proxy_download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+        
