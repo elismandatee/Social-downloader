@@ -179,19 +179,12 @@
         let currentActiveTitle = "";
 
         function switchTab(tabId) {
-            // Hide all tab content components
             document.querySelectorAll('.tab-content').forEach(el => el.classList.replace('block', 'hidden'));
-
-            // Show selected tab content component
             document.getElementById('tab-' + tabId).classList.replace('hidden', 'block');
-
-            // Revert all sidebar nav button layout appearances
-            document.querySelectorAll('.nav button').forEach(btn => {
+            document.querySelectorAll('nav button').forEach(btn => {
                 btn.classList.remove('active-link');
                 btn.classList.add('text-slate-400');
             });
-
-            // Highlight current button node configuration
             const targetBtn = document.getElementById('nav-' + tabId);
             targetBtn.classList.add('active-link');
             targetBtn.classList.remove('text-slate-400');
@@ -211,7 +204,7 @@
 
             statusText.classList.remove('hidden');
             resultBox.classList.add('hidden');
-            buttonsContainer.innerHTML = ''; // Reset container
+            buttonsContainer.innerHTML = '';
 
             try {
                 const response = await fetch('/download', {
@@ -226,24 +219,24 @@
                 if (data.success) {
                     videoTitle.innerText = data.title;
 
-                    // Loop through each extracted format profile to mount direct browser-ready links
                     data.formats.forEach(item => {
-                        const directUrl = item.url;
+                        const btn = document.createElement('button');
+                        btn.className = "w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md cursor-pointer";
+                        btn.innerHTML = `<i class="fa-solid fa-video"></i> Download ${item.quality}`;
 
-                        const btn = document.createElement('a');
-                        btn.href = directUrl; 
-                        btn.setAttribute('download', data.title + '.mp4'); // Forces direct file saving natively
-                        btn.setAttribute('target', '_blank'); // Opens direct stream safely
-                        btn.className = "w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md";
-
-                        // Switch icons cleanly depending on media stream configurations
-                        const iconClass = item.type === 'image' ? 'fa-image' : 'fa-video';
-                        btn.innerHTML = `<i class="fa-solid ${iconClass}"></i> Download ${item.quality}`;
-
-                        // Track actions to active dashboard history array
+                        // Force immediate trigger download handler
                         btn.onclick = () => {
-                            currentActiveUrl = directUrl;
+                            currentActiveUrl = item.url;
                             currentActiveTitle = `${data.title} (${item.quality})`;
+                            
+                            // Trigger invisible dynamic anchor click to start download response immediately
+                            const downloadAnchor = document.createElement('ahref' in document.createElement('a') ? 'a' : 'div');
+                            downloadAnchor.href = item.url;
+                            downloadAnchor.setAttribute('download', 'video.mp4');
+                            document.body.appendChild(downloadAnchor);
+                            downloadAnchor.click();
+                            document.body.removeChild(downloadAnchor);
+
                             saveToHistory();
                         };
 
@@ -282,4 +275,4 @@
     </script>
 </body>
                         </html>
-                        
+    
