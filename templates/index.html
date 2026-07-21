@@ -28,7 +28,7 @@
             <!-- Navigation links -->
             <div class="space-y-1.5">
                 <button onclick="switchTab('home')" id="nav-home" class="active-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-left">
-                    <i class="fa-solid fa-house text-base w-5 text-center"></i> $\star$ Home
+                    <i class="fa-solid fa-house text-base w-5 text-center"></i> Home
                 </button>
                 <button onclick="switchTab('history')" id="nav-history" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-white text-left">
                     <i class="fa-solid fa-folder-open text-base w-5 text-center"></i> Download History
@@ -37,13 +37,13 @@
                     <i class="fa-solid fa-gear text-base w-5 text-center"></i> Settings
                 </button>
                 <button onclick="switchTab('about')" id="nav-about" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-white text-left">
-                    <i class="fa-solid fa-circle-info text-base w-5 text-center"></i> ? About
+                    <i class="fa-solid fa-circle-info text-base w-5 text-center"></i> About
                 </button>
                 <button onclick="switchTab('privacy')" id="nav-privacy" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-white text-left">
                     <i class="fa-solid fa-shield-halved text-base w-5 text-center"></i> Privacy Policy
                 </button>
                 <button onclick="switchTab('contact')" id="nav-contact" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-white text-left">
-                    <i class="fa-solid fa-phone text-base w-5 text-center"></i> $\mathbf{C}$ Contact
+                    <i class="fa-solid fa-phone text-base w-5 text-center"></i> Contact
                 </button>
             </div>
         </div>
@@ -64,7 +64,7 @@
                 <p class="text-slate-400 mt-2 text-sm max-w-md mx-auto">Download your favorite clips from premium social media feeds instantly.</p>
             </div>
 
-            <!-- Search Bar / Link Input Input -->
+            <!-- Search Bar / Link Input -->
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl space-y-4">
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
@@ -102,7 +102,7 @@
 
         <!-- SECTION 2: DOWNLOAD HISTORY -->
         <section id="tab-history" class="tab-content hidden space-y-4">
-            <h2 class="text-2xl font-bold text-white mb-2">$\gg$ Download History</h2>
+            <h2 class="text-2xl font-bold text-white mb-2">Download History</h2>
             <p class="text-slate-400 text-sm mb-6">Track files you've pulled through the Elismandate core download stream.</p>
             <div id="historylist">
                 <!-- Fallback when dynamic storage is clear -->
@@ -114,7 +114,7 @@
 
         <!-- SECTION 3: SETTINGS -->
         <section id="tab-settings" class="tab-content hidden space-y-6">
-            <h2 class="text-2xl font-bold text-white">$\gg$ App Configurations</h2>
+            <h2 class="text-2xl font-bold text-white">App Configurations</h2>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
                 <div class="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800">
                     <div>
@@ -135,7 +135,7 @@
 
         <!-- SECTION 4: ABOUT PAGE -->
         <section id="tab-about" class="tab-content hidden space-y-4">
-            <h2 class="text-2xl font-bold text-white">$\gg$ About Elismandate</h2>
+            <h2 class="text-2xl font-bold text-white">About Elismandate</h2>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-slate-300 text-sm leading-relaxed space-y-3">
                 <p><strong>Elismandate</strong> is a premier, hyper-optimized unified network utility engine engineered by <strong>Ogbonna Elijah Elem</strong>.</p>
                 <p>By bypassing heavy social video tracking payloads across platforms like TikTok, Facebook, and Meta properties, users achieve frictionless extraction pipelines on mobile infrastructure instantly.</p>
@@ -144,7 +144,7 @@
 
         <!-- SECTION 5: PRIVACY POLICY -->
         <section id="tab-privacy" class="tab-content hidden space-y-4">
-            <h2 class="text-2xl font-bold text-white">$\gg$ Privacy Policy</h2>
+            <h2 class="text-2xl font-bold text-white">Privacy Policy</h2>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-slate-400 text-xs space-y-3 leading-relaxed">
                 <p class="font-semibold text-slate-200">Data Handling Commitments</p>
                 <p>Elismandate strictly implements secure transient passthrough extraction protocols. We do not aggregate personal credentials or maintain raw server media mirrors.</p>
@@ -154,7 +154,7 @@
 
         <!-- SECTION 6: CONTACT -->
         <section id="tab-contact" class="tab-content hidden space-y-4">
-            <h2 class="text-2xl font-bold text-white">$\gg$ Developer Support Matrix</h2>
+            <h2 class="text-2xl font-bold text-white">Developer Support Matrix</h2>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
                 <div class="mx-auto w-16 h-16 rounded-full bg-blue-600/10 flex items-center justify-center text-blue-500 text-2xl">
                     <i class="fa-solid fa-headset"></i>
@@ -207,7 +207,7 @@
             resultBox.classList.add('hidden');
             buttonsContainer.innerHTML = '';
 
-            // Handle Instagram directly from client-side to bypass server-side IP blocks
+            // Handle Instagram completely client-side using robust alternate public resolution APIs
             if (videoUrl.includes('instagram.com')) {
                 try {
                     let igRes = await fetch('https://api.cobalt.tools/api/json', {
@@ -232,7 +232,7 @@
                         btn.setAttribute('target', '_blank');
                         btn.setAttribute('download', 'Instagram_Video.mp4');
                         btn.className = "w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-md";
-                        btn.innerHTML = `<i class="fa-solid fa-fa-video"></i> Download HD Video`;
+                        btn.innerHTML = `<i class="fa-solid fa-video"></i> Download HD Video`;
                         
                         buttonsContainer.appendChild(btn);
                         resultBox.classList.remove('hidden');
@@ -240,10 +240,37 @@
                         return;
                     }
                 } catch (e) {
-                    // Fall through to backend handler if client-side API fails
+                    // Fall through to secondary client-side mirror if primary API blocks
                 }
+
+                // Secondary client-side mirror fallback for Instagram
+                try {
+                    let altRes = await fetch(`https://deliriussapi-v2.vercel.app/download/instagram?url=${encodeURIComponent(videoUrl)}`);
+                    let altData = await altRes.json();
+                    let altDownload = altData.data && (altData.data.url || altData.data[0]?.url);
+
+                    if (altDownload) {
+                        statusText.classList.add('hidden');
+                        videoTitle.innerText = "Instagram_Media.mp4";
+                        currentActiveUrl = altDownload;
+                        currentActiveTitle = "Instagram Video";
+
+                        let btn = document.createElement('a');
+                        btn.href = altDownload;
+                        btn.setAttribute('target', '_blank');
+                        btn.setAttribute('download', 'Instagram_Video.mp4');
+                        btn.className = "w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-md";
+                        btn.innerHTML = `<i class="fa-solid fa-video"></i> Download HD Video`;
+                        
+                        buttonsContainer.appendChild(btn);
+                        resultBox.classList.remove('hidden');
+                        saveToHistory();
+                        return;
+                    }
+                } catch (err) {}
             }
 
+            // Handle Facebook, TikTok, and X through your Python backend normally
             try {
                 let response = await fetch('/download', {
                     method: 'POST',
@@ -276,6 +303,7 @@
 
                     resultBox.classList.remove('hidden');
                 } else {
+                    statusText.classList.add('hidden');
                     alert('Extraction fault: ' + (data.error || 'Check source endpoint structures.'));
                 }
             } catch (err) {
@@ -305,5 +333,5 @@
         }
     </script>
 </body>
-                    </html>
-                                                                               
+    </html>
+    
