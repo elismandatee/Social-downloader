@@ -220,23 +220,17 @@
                     videoTitle.innerText = data.title;
 
                     data.formats.forEach(item => {
-                        const btn = document.createElement('button');
+                        // Render standard anchor tags styled as buttons for reliable browser download launching
+                        const btn = document.createElement('a');
+                        btn.href = item.url;
+                        btn.setAttribute('target', '_blank');
+                        btn.setAttribute('download', 'video.mp4');
                         btn.className = "w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md cursor-pointer";
                         btn.innerHTML = `<i class="fa-solid fa-video"></i> Download ${item.quality}`;
 
-                        // Force immediate trigger download handler
                         btn.onclick = () => {
                             currentActiveUrl = item.url;
                             currentActiveTitle = `${data.title} (${item.quality})`;
-                            
-                            // Trigger invisible dynamic anchor click to start download response immediately
-                            const downloadAnchor = document.createElement('ahref' in document.createElement('a') ? 'a' : 'div');
-                            downloadAnchor.href = item.url;
-                            downloadAnchor.setAttribute('download', 'video.mp4');
-                            document.body.appendChild(downloadAnchor);
-                            downloadAnchor.click();
-                            document.body.removeChild(downloadAnchor);
-
                             saveToHistory();
                         };
 
@@ -274,5 +268,5 @@
         }
     </script>
 </body>
-                        </html>
-    
+    </html>
+            
