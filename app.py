@@ -24,7 +24,7 @@ def download():
             'no_warnings': True,
             'cookiefile': '/tmp/cookies.txt',
             'allowed_extractors': ['default', 'tiktok', 'instagram', 'facebook', 'twitter', 'x'],
-            'format': 'best',
+            'format': 'best/bestvideo+bestaudio',
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -32,10 +32,21 @@ def download():
             title = info.get('title', 'Social_Media_Download')
 
         formats_available = []
+        seen_urls = set()
 
         if info.get('formats'):
             for f in info['formats']:
+                # Only grab formats that have both a video codec and an audio codec, or safe single streams
                 if f.get('url') and f.get('vcodec') != 'none':
+                    # Skip video-only tracks to prevent silent downloads on X and Instagram
+                    if f.get('acodec') == 'none' and 'tiktok' not in video_url and 'twitter' not in video_url:
+                        continue
+
+                    f_url = f['url']
+                    if f_url in seen_urls:
+                        continue
+                    seen_urls.add(f_url)
+
                     height = f.get('height')
                     if height and isinstance(height, int):
                         if height >= 1080: label = "HD 1080p"
@@ -47,7 +58,7 @@ def download():
 
                     formats_available.append({
                         'quality': label,
-                        'url': f['url'],
+                        'url': f_url,
                         'type': 'video'
                     })
 
@@ -69,7 +80,7 @@ def download():
                     })
 
         if not formats_available:
-            return jsonify({'error': 'Could not extract a valid media stream.'}), 400
+            return jsonify({'error': 'Could not extract a valid media stream. Try another link.'}), 400
 
         return jsonify({
             'success': True,
@@ -82,4 +93,4 @@ def download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-    
+        
