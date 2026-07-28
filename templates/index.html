@@ -239,11 +239,8 @@
                         saveToHistory();
                         return;
                     }
-                } catch (e) {
-                    // Fall through to secondary client-side mirror if primary API blocks
-                }
+                } catch (e) {}
 
-                // Secondary client-side mirror fallback for Instagram
                 try {
                     let altRes = await fetch(`https://deliriussapi-v2.vercel.app/download/instagram?url=${encodeURIComponent(videoUrl)}`);
                     let altData = await altRes.json();
@@ -331,7 +328,26 @@
             `;
             container.prepend(item);
         }
-    </script>
-</body>
-    </html>
-    
+
+        // --- Smart Clipboard Detection Feature ---
+        let lastCheckedClipboard = "";
+
+        async function checkClipboardForLinks() {
+            if (!navigator.clipboard || !navigator.clipboard.readText) return;
+            if (document.hidden) return;
+
+            try {
+                let text = await navigator.clipboard.readText();
+                text = text ? text.trim() : "";
+
+                if (text && text !== lastCheckedClipboard) {
+                    if (
+                        text.includes('tiktok.com') || 
+                        text.includes('instagram.com') || 
+                        text.includes('facebook.com') || 
+                        text.includes('fb.watch') || 
+                        text.includes('twitter.com') || 
+                        text.includes('x.com')
+                    ) {
+                        lastCheckedClipboard = text;
+                        showClipboardT
