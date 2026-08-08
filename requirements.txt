@@ -1,4 +1,4 @@
-flask
+flask>=3.0.0
 requests
-yt-dlp>=2026.03.01
+yt-dlp>=2026.03.10
 gunicorn
