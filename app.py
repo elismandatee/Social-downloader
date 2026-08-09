@@ -66,7 +66,7 @@ def download():
                 'quiet': True,
                 'no_warnings': True,
                 'socket_timeout': 30,
-                'format': 'best',
+                'format': 'best[ext=mp4]/best',
             }
             
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -151,4 +151,3 @@ def proxy_download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-                
