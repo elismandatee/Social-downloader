@@ -41,7 +41,24 @@ def download():
                         })
             except Exception:
                 pass
-
+    # Dedicated Instagram Handler using a public API fallback to bypass 429 blocks
+    if 'instagram.com' in video_url.lower():
+        try:
+            api_endpoint = f"https://deliriusapi-v2.vercel.app/download/instagram?url={requests.utils.quote(video_url)}"
+            res = requests.get(api_endpoint, timeout=15).json()
+            if res.get('status') and res.get('data'):
+                media_list = res.get('data')
+                for item in media_list:
+                    dl_url = item.get('url')
+                    if dl_url:
+                        formats_available.append({
+                            'quality': 'HD Video',
+                            'url': dl_url,
+                            'type': 'video'
+                        })
+        except Exception:
+            pass
+                
         # Standard yt-dlp extraction for Facebook and X (Twitter)
         if not formats_available and not 'tiktok.com' in video_url.lower():
             ydl_opts = {
