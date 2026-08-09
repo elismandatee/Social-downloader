@@ -23,7 +23,7 @@ def download():
         formats_available = []
         title = "Social_Media_Download"
         
-        # Dedicated TikTok Handler
+        # Dedicated TikTok Handler (Fully preserved)
         if 'tiktok.com' in video_url.lower():
             try:
                 api_endpoint = f"https://tikwm.com/api/?url={requests.utils.quote(video_url)}"
@@ -42,25 +42,25 @@ def download():
             except Exception:
                 pass
 
-        # Dedicated Instagram Handler (Using pre-muxed audio/video stream source)
+        # Dedicated Instagram Handler (Using audio-safe stream routing)
         if 'instagram.com' in video_url.lower():
             try:
-                api_endpoint = f"https://tikwm.cc/api/?url={requests.utils.quote(video_url)}"
-                res = requests.get(api_endpoint, timeout=15).json()
-                if res.get('code') == 0 and res.get('data'):
-                    vid_data = res.get('data')
-                    title = vid_data.get('title', 'Instagram_Video')
-                    play_addr = vid_data.get('url')
-                    if play_addr:
+                headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'application/json'}
+                payload = {'url': video_url, 'vQuality': '720'}
+                res = requests.post("https://coapi.it/api/json", json=payload, headers=headers, timeout=15).json()
+                
+                if res.get('status') == 'stream' or res.get('url'):
+                    dl_url = res.get('url') or (res.get('picker') and res.get('picker')[0].get('url'))
+                    if dl_url:
                         formats_available.append({
                             'quality': 'HD Video',
-                            'url': play_addr,
+                            'url': dl_url,
                             'type': 'video'
                         })
             except Exception:
                 pass
 
-        # Standard yt-dlp extraction for Facebook and X (Twitter)
+        # Standard yt-dlp extraction for Facebook and X (Twitter) (Fully preserved)
         if not formats_available and not 'tiktok.com' in video_url.lower() and not 'instagram.com' in video_url.lower():
             ydl_opts = {
                 'quiet': True,
@@ -151,4 +151,4 @@ def proxy_download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-    
+            
