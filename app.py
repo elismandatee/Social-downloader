@@ -42,27 +42,26 @@ def download():
             except Exception:
                 pass
 
-        # Dedicated Instagram Handler (Using reliable public API)
+        # Dedicated Instagram Handler
         if 'instagram.com' in video_url.lower():
             try:
-                api_endpoint = f"https://saveig.app/api/ajaxSearch?q={requests.utils.quote(video_url)}"
-                headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'X-Requested-With': 'XMLHttpRequest'}
-                res = requests.post(api_endpoint, headers=headers, timeout=15).json()
-                if res.get('status') == 'ok' and res.get('data'):
-                    from bs4 import BeautifulSoup
-                    soup = BeautifulSoup(res.get('data'), 'html.parser')
-                    dl_link = soup.find('a', {'class': 'download-items__btn'})
-                    if dl_link and dl_link.get('href'):
-                        formats_available.append({
-                            'quality': 'HD Video',
-                            'url': dl_link.get('href'),
-                            'type': 'video'
-                        })
+                api_endpoint = f"https://deliriusapi-v2.vercel.app/download/instagram?url={requests.utils.quote(video_url)}"
+                res = requests.get(api_endpoint, timeout=15).json()
+                if res.get('status') and res.get('data'):
+                    media_list = res.get('data')
+                    for item in media_list:
+                        dl_url = item.get('url')
+                        if dl_url:
+                            formats_available.append({
+                                'quality': 'HD Video',
+                                'url': dl_url,
+                                'type': 'video'
+                            })
             except Exception:
                 pass
 
         # Standard yt-dlp extraction for Facebook and X (Twitter)
-        if not formats_available and not 'tiktok.com' in video_url.lower() and not 'instagram.com' in video_url.lower():
+        if not formats_available and not 'tiktok.com' in video_url.lower():
             ydl_opts = {
                 'quiet': True,
                 'no_warnings': True,
@@ -152,4 +151,4 @@ def proxy_download():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-            
+                                                 
